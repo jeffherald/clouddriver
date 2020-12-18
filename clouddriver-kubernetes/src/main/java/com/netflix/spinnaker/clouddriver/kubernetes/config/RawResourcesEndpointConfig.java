@@ -32,6 +32,10 @@ public class RawResourcesEndpointConfig {
   @Getter private List<Pattern> omitKindPatterns = new ArrayList<>();
 
   public void validate() {
+    if (!kindExpressions.isEmpty() && !omitKindExpressions.isEmpty()) {
+      throw new IllegalArgumentException(
+          "At most one of 'kindExpressions' and 'omitKindExpressions' can be specified");
+    }
     for (String exp : kindExpressions) {
       kindPatterns.add(Pattern.compile(exp));
     }

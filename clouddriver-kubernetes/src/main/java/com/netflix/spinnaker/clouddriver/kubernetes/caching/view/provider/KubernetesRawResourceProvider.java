@@ -95,8 +95,8 @@ public class KubernetesRawResourceProvider {
         omitKindPatterns.size());
 
     // check account level kinds and omitKinds first
-    if (!kinds.isEmpty()) {
-      return kinds.contains(resource.getKind());
+    if (!kinds.isEmpty() && !kinds.contains(resource.getKind())) {
+      return false;
     }
     if (omitKinds.contains(resource.getKind())) {
       return false;

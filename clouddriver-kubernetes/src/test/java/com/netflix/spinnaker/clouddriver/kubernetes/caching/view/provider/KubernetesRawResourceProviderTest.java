@@ -65,7 +65,6 @@ final class KubernetesRawResourceProviderTest {
     KubernetesCacheUtils cacheUtils = mock(KubernetesCacheUtils.class);
     accountResolver = mock(KubernetesAccountResolver.class);
     credentials = mock(KubernetesCredentials.class);
-    // config = new KubernetesConfigurationProperties();
     provider = new KubernetesRawResourceProvider(cacheUtils, accountResolver);
 
     ImmutableList.Builder<CacheData> cacheDataBuilder = ImmutableList.builder();
@@ -137,7 +136,7 @@ final class KubernetesRawResourceProviderTest {
   }
 
   @Test
-  void getKubernetesResourcesFilteringAndUnfilteringARawResource() {
+  void getKubernetesResourcesIncludingThenFilteringAKind() {
     RawResourcesEndpointConfig epConfig = mock(RawResourcesEndpointConfig.class);
     List<String> kindExpressions = new ArrayList<>();
     kindExpressions.add("^" + POD_KIND.toString() + "$");
@@ -146,14 +145,13 @@ final class KubernetesRawResourceProviderTest {
       kindPatterns.add(Pattern.compile(exp));
     }
     when(epConfig.getOmitKindPatterns()).thenReturn(kindPatterns);
-    when(epConfig.getKindPatterns()).thenReturn(kindPatterns);
     when(credentials.getRawResourcesEndpointConfig()).thenReturn(epConfig);
-    when(credentials.getKinds()).thenReturn(ImmutableSet.of());
+    when(credentials.getKinds()).thenReturn(ImmutableSet.of(POD_KIND, SECRET_KIND));
     when(credentials.getOmitKinds()).thenReturn(ImmutableSet.of());
 
     Set<KubernetesRawResource> rawResources = provider.getApplicationRawResources(APPLICATION);
 
-    assertThat(rawResources.size()).isEqualTo(2);
+    assertThat(rawResources.size()).isEqualTo(1);
   }
 
   @Test
